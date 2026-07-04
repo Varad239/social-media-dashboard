@@ -4,10 +4,10 @@ const express = require("express");
 const cors = require("cors");
 
 const authRoutes =
-  require("./routes/auth");
+  require("./auth");
 
 const analyticsRoutes =
-  require("./routes/analytics");
+  require("./analytics");
 
 const app = express();
 
@@ -30,11 +30,24 @@ app.get("/", (req, res) => {
   );
 });
 
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
+
+  res.status(500).json({
+    message: "Server Error"
+  });
+});
+
+const port = Number(process.env.PORT) || 5000;
+
 app.listen(
-  process.env.PORT,
+  port,
   () => {
     console.log(
-      `Server running on port ${process.env.PORT}`
+      `Server running on port ${port}`
     );
   }
 );
